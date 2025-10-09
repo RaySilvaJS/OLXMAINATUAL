@@ -834,10 +834,7 @@ const config = require("../../config.json");
      //   message.key.fromMe === false &&
      //   message.key.participant?.includes("@broadcast");
 
-     const isBotMessage =
-       message.key.fromMe === false &&
-       (message.key.participant === botId ||
-         message.key.participant?.includes("@broadcast"));
+     const isBotMessage = message.key.remoteJid === botId;
 
      // Verificar se o conteúdo parece ser uma resposta de consulta
      const isQueryResponse =
