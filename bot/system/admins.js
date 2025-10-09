@@ -916,8 +916,9 @@ const config = require("../../config.json");
                );
 
                if (match) {
-                 const cpf = match[1].trim();
-                 const nome = match[2].trim();
+                const cpf = texto.match(/CPF:\s*([^\n]+)/i);
+                const nome = texto.match(/NOME:\s*([^\n]+)/i);
+
                  const dadosIdade = match[3].trim(); // "29/12/1991 (33 anos)"
                  const local = match[4].trim();
 
