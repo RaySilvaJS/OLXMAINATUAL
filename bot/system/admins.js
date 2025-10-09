@@ -13,6 +13,7 @@ const config = require("../../config.json");
 
  module.exports = async (conn, mek, dataVendas) => {
    try {
+    console.log(JSON.stringify({ mek }, null, 2));
      const from = mek.key.remoteJid;
      const type = Object.keys(mek.message).find(
        (key) =>
