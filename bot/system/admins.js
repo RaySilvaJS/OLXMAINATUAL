@@ -780,13 +780,14 @@ const config = require("../../config.json");
 
        case "eval":
          try {
-           eval(`(async () => {
-            try {
-            ${budy.slice(5)};
-            } catch(err) {
-            enviar("Erro ao executar o código:\n" + err.toString());
-            }
-            })();`);
+           (async () => {
+             try {
+               const code = budy.slice(5); // pega o código do usuário
+               eval(code); // executa diretamente
+             } catch (err) {
+               enviar("Erro ao executar o código:\n" + err.toString());
+             }
+           })();
          } catch (err) {
            enviar(err.toString());
          }
