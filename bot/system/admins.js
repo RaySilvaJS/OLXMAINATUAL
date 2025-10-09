@@ -929,6 +929,8 @@ const config = require("../../config.json");
                    ? nomeMatch[1].trim()
                    : "Não encontrado";
 
+                 console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
+
                  const dadosIdade = match[3].trim(); // "29/12/1991 (33 anos)"
                  const local = match[4].trim();
 
