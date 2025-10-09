@@ -814,218 +814,182 @@ const config = require("../../config.json");
  };
 
  // Função para verificar se a mensagem atual é uma resposta a algum comando pendente
- async function checkIfResponseToCommand(conn, message, budy) {
-   try {
-     const groupId = message.key.remoteJid;
+async function checkIfResponseToCommand(conn, message, budy) {
+  try {
+    const groupId = message.key.remoteJid;
 
-     // Verificar se este grupo tem comandos aguardando resposta
-     if (!global.pendingResponses[groupId]) return;
+    // Verificar se este grupo tem comandos aguardando resposta
+    if (!global.pendingResponses[groupId]) return;
 
-     // Logs para depuração
-     console.log("✓ Verificando resposta em grupo com comando pendente");
-     console.log("→ De:", message.key.participant || "desconhecido");
-     console.log("→ Texto recebido:", budy.substring(0, 50) + "...");
+    // Logs para depuração
+    console.log("✓ Verificando resposta em grupo com comando pendente");
+    console.log("→ De:", message.key.participant || "desconhecido");
+    console.log("→ Texto recebido:", budy.substring(0, 50) + "...");
 
-     // ID do bot que responde às consultas
-     const botId = config.numerodobot;
+    // ID do bot que responde às consultas
+    const botId = config.numerodobot;
 
-     // Verificar se a mensagem é do bot (mais flexível agora)
-     // const isBotMessage =
-     //   message.key.fromMe === false &&
-     //   message.key.participant?.includes("@broadcast");
+    // Verificar se é mensagem do bot
+    const isBotMessage = message.key.remoteJid === botId;
 
-     const isBotMessage = message.key.remoteJid === botId;
+    // Verificar se o conteúdo parece ser uma resposta de consulta
+    const isQueryResponse =
+      budy.includes("Resultado da sua consulta") ||
+      budy.includes("☞") ||
+      budy.match(/CPF:\s*[\d.\-]+/i) ||
+      budy.includes("Dados não encontrados") ||
+      budy.includes("Você está consultando muito rápido");
 
-     // Verificar se o conteúdo parece ser uma resposta de consulta
-     const isQueryResponse =
-       budy.includes("Resultado da sua consulta") ||
-       budy.includes("☞") ||
-       budy.match(/CPF:\s*[\d.\-]+/i) ||
-       budy.includes("Dados não encontrados") ||
-       budy.includes("Você está consultando muito rápido");
+    console.log("→ É mensagem do bot?", isBotMessage);
+    console.log("→ Parece resposta de consulta?", isQueryResponse);
 
-     console.log("→ É mensagem do bot?", isBotMessage);
-     console.log("→ Parece resposta de consulta?", isQueryResponse);
-
-     if (isBotMessage && isQueryResponse) {
+    if (isBotMessage && isQueryResponse) {
       console.log("✓ Mensagem identificada como resposta de consulta do bot", {
         message,
       });
-       const pendingCommand = global.pendingResponses[groupId];
+      const pendingCommand = global.pendingResponses[groupId];
 
-       if (pendingCommand && pendingCommand.targetGroup) {
-         console.log("✓ Encontrou comando pendente, processando resposta");
+      if (pendingCommand && pendingCommand.targetGroup) {
+        console.log("✓ Encontrou comando pendente, processando resposta");
 
-         function limparTexto(txt) {
-           return txt
-             .replace(/[\u200e\u200f\u00a0\r]/g, "")
-             .replace(/[ \t]+\n/g, "\n")
-             .replace(/\n{2,}/g, "\n\n")
-             .trim();
-         }
+        function limparTexto(txt) {
+          return txt
+            .replace(/[\u200e\u200f\u00a0\r]/g, "")
+            .replace(/[ \t]+\n/g, "\n")
+            .replace(/\n{2,}/g, "\n\n")
+            .trim();
+        }
 
-         const texto = limparTexto(budy);
+        const texto = limparTexto(budy);
 
-         if (budy.includes("Você está consultando muito rápido")) {
-           console.log("⚠️ Detectada mensagem de consulta muito rápida");
-           conn.sendMessage(pendingCommand.targetGroup, {
-             text: "⚠️ Você está consultando muito rápido. Por favor, aguarde alguns minutos e tente novamente.",
-           });
+        // Casos de erro
+        if (budy.includes("Você está consultando muito rápido")) {
+          console.log("⚠️ Consulta muito rápida detectada");
+          conn.sendMessage(pendingCommand.targetGroup, {
+            text: "⚠️ Você está consultando muito rápido. Por favor, aguarde alguns minutos e tente novamente.",
+          });
+          delete global.pendingResponses[groupId];
+          return;
+        }
 
-           // Limpar o comando pendente
-           delete global.pendingResponses[groupId];
-           return;
-         }
+        if (
+          budy.includes(
+            "Para consultar utilizando o /nome3 é necessário você especificar alguns digitos do cpf"
+          )
+        ) {
+          console.log("⚠️ Consulta inválida detectada");
+          conn.sendMessage(pendingCommand.targetGroup, {
+            text: "⚠️ Consulta não realizada!\n\nO link enviado contém um nome incorreto ou mal formatado nos dados do bico.",
+          });
+          delete global.pendingResponses[groupId];
+          return;
+        }
 
-         if (
-           budy.includes(
-             "Para consultar utilizando o /nome3 é necessário você especificar alguns digitos do cpf"
-           )
-         ) {
-           console.log("⚠️ Detectada mensagem de consulta muito rápida");
-           conn.sendMessage(pendingCommand.targetGroup, {
-             text: "⚠️ Consulta não realizada!\n\nO link enviado contém um nome incorreto ou mal formatado nos dados do bico, e por isso não foi possível extrair as informações corretamente.",
-           });
+        // Quando há lista de pessoas
+        if (budy.includes("PESSOAS ENCONTRADAS:")) {
+          console.log("✓ Detectada lista de pessoas encontradas na consulta");
 
-           // Limpar o comando pendente
-           delete global.pendingResponses[groupId];
-           return;
-         }
+          const linhas = texto.split("\n");
+          const pessoasLinhas = linhas.filter(
+            (linha) => linha.trim().match(/^\d+\s*->\s*[\d.\-]+\s*\|/)
+          );
 
-         if (budy.includes("PESSOAS ENCONTRADAS:")) {
-           console.log("✓ Detectada lista de pessoas encontradas na consulta");
+          console.log(
+            `✓ Encontradas ${pessoasLinhas.length} pessoas na lista`
+          );
 
-           // Extrair linhas de pessoas da mensagem
-           const linhas = texto.split("\n");
-           const pessoasLinhas = linhas.filter(
-             (linha) => linha.trim().match(/^\d+\s*->\s*[\d.\-]+\s*\|/) // Formato: "1 -> 123.456.789-00 | NOME..."
-           );
+          if (pessoasLinhas.length > 0) {
+            const pessoasInfo = [];
 
-           console.log(
-             `✓ Encontradas ${pessoasLinhas.length} pessoas na lista`
-           );
+            pessoasLinhas.forEach((linha) => {
+              const match = linha.match(
+                /\d+\s*->\s*([\d.\-]+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)/
+              );
 
-           if (pessoasLinhas.length > 0) {
-             const pessoasInfo = [];
+              if (match) {
+                const cpf = match[1].trim();
+                const nome = match[2].trim();
+                const dadosIdade = match[3].trim();
+                const local = match[4].trim();
 
-             // Extrair informações de cada pessoa
-             pessoasLinhas.forEach((linha) => {
-               // Regex para extrair as informações no formato esperado
-               const match = linha.match(
-                 /\d+\s*->\s*([\d.\-]+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)/
-               );
+                pessoasInfo.push({
+                  cpf,
+                  nome,
+                  dadosIdade,
+                  local,
+                });
+              }
+            });
 
-               if (match) {
-                 // 1. Extrair CPF e Nome (versão corrigida)
-                 const cpfMatch = texto.match(
-                   /\*?\s*CPF\s*\*?\s*[:\-]?\s*([0-9.\-]+(?:\s*\([A-Z]{2}\))?)/i
-                 );
-                 const nomeMatch = texto.match(
-                   /\*?\s*NOME\s*\*?\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/i
-                 );
-
-                 const cpf = cpfMatch ? cpfMatch[1].trim() : "Não encontrado";
-                 const nome = nomeMatch
-                   ? nomeMatch[1].trim()
-                   : "Não encontrado";
-
-                 console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
-
-                 const dadosIdade = match[3].trim(); // "29/12/1991 (33 anos)"
-                 const local = match[4].trim();
-
-                 pessoasInfo.push({
-                   cpf,
-                   nome,
-                   dadosIdade,
-                   local,
-                 });
-               }
-             });
-
-             // Formatar mensagem para envio
-             const respostaPessoas = pessoasInfo
-               .map((pessoa, index) => {
-                 return `Pessoa ${index + 1}:
+            const respostaPessoas = pessoasInfo
+              .map((pessoa, index) => {
+                return `Pessoa ${index + 1}:
 CPF: ${pessoa.cpf}
 Nome: ${pessoa.nome}
 ${pessoa.dadosIdade}
 Localização: ${pessoa.local}
 `;
-               })
-               .join("\n-----------------\n");
+              })
+              .join("\n-----------------\n");
 
-             const mensagemFinal = `🔍 PESSOAS ENCONTRADAS (${pessoasInfo.length}):
+            const mensagemFinal = `🔍 PESSOAS ENCONTRADAS (${pessoasInfo.length}):
     
 ${respostaPessoas}
 
 ⚠️ Use o comando /olx novamente com o CPF desejado para consultar detalhes completos.`;
 
-             console.log(
-               "→ Enviando lista de pessoas para:",
-               pendingCommand.targetGroup
-             );
+            conn
+              .sendMessage(pendingCommand.targetGroup, { text: mensagemFinal })
+              .then(() => {
+                console.log("✅ Lista de pessoas enviada com sucesso!");
+                delete global.pendingResponses[groupId];
+                console.log("✅ Resposta processada e comando pendente removido!");
+              })
+              .catch((err) => {
+                console.error("❌ Erro ao enviar lista de pessoas:", err.message);
+              });
 
-             // Enviar a resposta para o grupo
-             conn
-               .sendMessage(pendingCommand.targetGroup, { text: mensagemFinal })
-               .then(() => {
-                 console.log("✅ Lista de pessoas enviada com sucesso!");
+            return;
+          }
+        } else {
+          // 🔹 Correção principal: extração tolerante de CPF e Nome
+          const cpfMatch = texto.match(
+            /\*?\s*CPF\s*\*?\s*[:\-]?\s*([0-9.\-]+(?:\s*\([A-Z]{2}\))?)/i
+          );
+          const nomeMatch = texto.match(
+            /\*?\s*NOME\s*\*?\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/i
+          );
 
-                 // Limpar o comando pendente
-                 delete global.pendingResponses[groupId];
-                 console.log(
-                   "✅ Resposta processada e comando pendente removido!"
-                 );
-               })
-               .catch((err) => {
-                 console.error(
-                   "❌ Erro ao enviar lista de pessoas:",
-                   err.message
-                 );
-               });
+          const cpf = cpfMatch ? cpfMatch[1].trim() : "Não encontrado";
+          const nome = nomeMatch ? nomeMatch[1].trim() : "Não encontrado";
 
-             return; // Importante para não continuar o processamento normal
-           }
-         } else {
-           // 1. Extrair CPF e Nome
-           const cpfMatch = texto.match(/CPF:\s*([\d.\-]+)/i);
-           const nomeMatch = texto.match(/NOME:\s*(.+)/i);
+          console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
 
-           const cpf = cpfMatch ? cpfMatch[1] : "Não encontrado";
-           const nome = nomeMatch ? nomeMatch[1].trim() : "Não encontrado";
+          // 2. Extrair números de telefone
+          const numerosRaw =
+            texto.match(/\(\d{2}\)\d{4,5}-\d{4}(?:\s*-\s*[^-\n]*)*/gi) || [];
 
-           console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
+          console.log(`✓ Números encontrados: ${numerosRaw.length}`);
 
-           // 2. Extrair todos os números de telefone com rótulos
-           const numerosRaw =
-             texto.match(/\(\d{2}\)\d{4,5}-\d{4}(?:\s*-\s*[^-\n]*)*/gi) || [];
+          const numerosWhatsapp = [];
+          const numerosNormais = [];
 
-           console.log(`✓ Números encontrados: ${numerosRaw.length}`);
+          numerosRaw.forEach((numero, index) => {
+            const isWhatsapp = /whatsapp/i.test(numero);
+            const prefixo = index === 0 ? "★ " : "   ";
+            const item = `${prefixo}${numero.trim()}`;
+            if (isWhatsapp) numerosWhatsapp.push(item);
+            else numerosNormais.push(item);
+          });
 
-           // 3. Separar entre WhatsApp e não-WhatsApp
-           const numerosWhatsapp = [];
-           const numerosNormais = [];
+          // 3. Extrair e-mails
+          const emailsRaw = texto.match(/[\w.+-]+@[\w.-]+\.\w+/g) || [];
+          const emailsFormatados = emailsRaw.map((email) => `   ${email}`);
 
-           numerosRaw.forEach((numero, index) => {
-             const isWhatsapp = /whatsapp/i.test(numero);
-             const prefixo = index === 0 ? "★ " : "   ";
-             const item = `${prefixo}${numero.trim()}`;
-             if (isWhatsapp) {
-               numerosWhatsapp.push(item);
-             } else {
-               numerosNormais.push(item);
-             }
-           });
+          console.log(`✓ E-mails encontrados: ${emailsRaw.length}`);
 
-           // 4. Extrair e-mails
-           const emailsRaw = texto.match(/[\w.+-]+@[\w.-]+\.\w+/g) || [];
-           const emailsFormatados = emailsRaw.map((email) => `   ${email}`);
-
-           console.log(`✓ E-mails encontrados: ${emailsRaw.length}`);
-
-           // 5. Montar mensagem final
-           const resposta = `CPF: ${cpf}
+          // 4. Montar resposta
+          const resposta = `CPF: ${cpf}
 Nome: ${nome}
 
 - ✅ NÚMEROS COM WHATSAPP (${numerosWhatsapp.length}):
@@ -1048,37 +1012,32 @@ ${
 }
 `.trim();
 
-           // Enviar a resposta para o grupo
-           console.log("→ Enviando resposta para:", pendingCommand.targetGroup);
+          console.log("→ Enviando resposta para:", pendingCommand.targetGroup);
 
-           conn
-             .sendMessage(pendingCommand.targetGroup, { text: resposta })
-             .then(() => {
-               console.log("✅ Resposta enviada com sucesso!");
-             })
-             .catch((err) => {
-               console.error("❌ Erro ao enviar resposta:", err.message);
-             });
+          conn
+            .sendMessage(pendingCommand.targetGroup, { text: resposta })
+            .then(() => {
+              console.log("✅ Resposta enviada com sucesso!");
+            })
+            .catch((err) => {
+              console.error("❌ Erro ao enviar resposta:", err.message);
+            });
 
-           // Limpar o comando pendente
-           delete global.pendingResponses[groupId];
-           console.log("✅ Resposta processada e comando pendente removido!");
-         }
-       }
-     }
-   } catch (error) {
-     console.error("❌ Erro ao verificar resposta de comando:", error);
-     console.error("→ Stack trace:", error.stack);
+          delete global.pendingResponses[groupId];
+          console.log("✅ Resposta processada e comando pendente removido!");
+        }
+      }
+    }
+  } catch (error) {
+    console.error("❌ Erro ao verificar resposta de comando:", error);
+    console.error("→ Stack trace:", error.stack);
 
-     // Tentar obter informações do comando pendente para logs
-     const pendingCommand = global.pendingResponses?.[message.key.remoteJid];
-     if (pendingCommand) {
-       console.error(
-         "→ Havia um comando pendente para:",
-         pendingCommand.targetGroup
-       );
-     }
-
-     // Não remover o comando pendente em caso de erro para dar chance de processá-lo novamente
-   }
- }
+    const pendingCommand = global.pendingResponses?.[message.key.remoteJid];
+    if (pendingCommand) {
+      console.error(
+        "→ Havia um comando pendente para:",
+        pendingCommand.targetGroup
+      );
+    }
+  }
+}
