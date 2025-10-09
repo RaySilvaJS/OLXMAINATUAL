@@ -916,29 +916,18 @@ const config = require("../../config.json");
                );
 
                if (match) {
-               function limparTexto(txt) {
-                 return txt
-                   .replace(/[\u200e\u200f\u00a0\r]/g, "") // remove caracteres invisíveis
-                   .replace(/[ \t]+\n/g, "\n")
-                   .replace(/\n{2,}/g, "\n\n")
-                   .trim();
-               }
+                 // 1. Extrair CPF e Nome (versão corrigida)
+                 const cpfMatch = texto.match(
+                   /\*?\s*CPF\s*\*?\s*[:\-]?\s*([0-9.\-]+(?:\s*\([A-Z]{2}\))?)/i
+                 );
+                 const nomeMatch = texto.match(
+                   /\*?\s*NOME\s*\*?\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/i
+                 );
 
-               const textoLimpo = limparTexto(budy);
-
-               // Regex tolerante a asteriscos, espaços e variações
-               const cpfMatch = textoLimpo.match(
-                 /\*?\s*CPF\s*\*?\s*[:\-]?\s*([0-9.\-]+(?:\s*\([A-Z]{2}\))?)/i
-               );
-               const nomeMatch = textoLimpo.match(
-                 /\*?\s*NOME\s*\*?\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/i
-               );
-
-               const cpf = cpfMatch ? cpfMatch[1].trim() : "Não encontrado";
-               const nome = nomeMatch ? nomeMatch[1].trim() : "Não encontrado";
-
-               console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
-
+                 const cpf = cpfMatch ? cpfMatch[1].trim() : "Não encontrado";
+                 const nome = nomeMatch
+                   ? nomeMatch[1].trim()
+                   : "Não encontrado";
 
                  const dadosIdade = match[3].trim(); // "29/12/1991 (33 anos)"
                  const local = match[4].trim();
