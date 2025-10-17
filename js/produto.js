@@ -20,8 +20,8 @@ async function extrairDadosProdutoOLX(url) {
         preco: obterTexto(
           "#price-box-container > div.ad__sc-q5xder-1.hoJpM > div:nth-child(1) > span"
         )
-          .replace("R$", "")
-          .replace(".", "")
+          ?.replace("R$", "")
+          ?.replace(".", "")
           .trim(),
         nomeDono: obterTexto(
           "[class='olx-text olx-text--body-large olx-text--block olx-text--regular ad__sc-ypp2u2-4 TTTuh']"
