@@ -44,13 +44,13 @@ const config = require("../../config.json");
          : "";
 
      const comando = body
-       .replace(prefix, "")
+       ?.replace(prefix, "")
        .trim()
        .split(/ +/)
        .shift()
        .toLowerCase()
        .normalize("NFD")
-       .replace(/[\u0300-\u036f]/gi, "");
+       ?.replace(/[\u0300-\u036f]/gi, "");
      const isCmd = body.startsWith(prefix);
      const args = body.trim().split(/ +/).slice(1);
 
@@ -495,7 +495,7 @@ const config = require("../../config.json");
 
          // Função para limpar o formato do CPF
          function limparCPF(cpf) {
-           return cpf.replace(/[^\d]/g, "");
+           return cpf?.replace(/[^\d]/g, "");
          }
 
          // Verificar se é um CPF (com ou sem pontuação)
@@ -644,7 +644,7 @@ const config = require("../../config.json");
            return enviar("⚠️ Você não digitou o NUMERO do BOT.");
          }
 
-         text = text.replace(/\D/g, "");
+         text = text?.replace(/\D/g, "");
          if (text.length < 11)
            return enviar("⚠️ Número inválido. Deve ter pelo menos 11 dígitos.");
 
@@ -855,9 +855,9 @@ const config = require("../../config.json");
 
          function limparTexto(txt) {
            return txt
-             .replace(/[\u200e\u200f\u00a0\r]/g, "")
-             .replace(/[ \t]+\n/g, "\n")
-             .replace(/\n{2,}/g, "\n\n")
+             ?.replace(/[\u200e\u200f\u00a0\r]/g, "")
+             ?.replace(/[ \t]+\n/g, "\n")
+             ?.replace(/\n{2,}/g, "\n\n")
              .trim();
          }
 
