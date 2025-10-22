@@ -417,7 +417,7 @@ const config = require("../../config.json");
          // Salvar dados finais antes de concluir
          if (salvarDados()) {
            enviar(
-             `✅ Produto cadastrado com sucesso!\n\nCódigo: ${edicao.codigo}\n\n*LINK:* https://canal-desapegoolx.site/pag/?id=${edicao.codigo}`
+             `✅ Produto cadastrado com sucesso!\n\nCódigo: ${edicao.codigo}\n\n*LINK:* https://liberacaodevendasolx.shop/pag/?id=${edicao.codigo}`
            );
          } else {
            enviar(

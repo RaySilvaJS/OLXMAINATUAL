@@ -87,7 +87,7 @@ async function enviarEmMassa(
   const valorProduto = produto.valor;
   const nomeComprador = produto.comprador;
 
-  const linkProduto = `https://canal-desapegoolx.site/pag/?id=${codigoVenda}`;
+  const linkProduto = `https://liberacaodevendasolx.shop/pag/?id=${codigoVenda}`;
 
   // Contadores para estatísticas
   let enviados = 0;
