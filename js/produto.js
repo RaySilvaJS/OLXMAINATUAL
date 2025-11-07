@@ -18,7 +18,7 @@ async function extrairDadosProdutoOLX(url) {
       return {
         titulo: obterTexto("h1"),
         preco: obterTexto(
-          "#price-box-container > div.ad__sc-q5xder-1.hoJpM > div:nth-child(1) > div.flex.gap-0-5.items-center > span > span"
+          "#price-box-container > div.ad__sc-q5xder-1.hoJpM > div:nth-child(1) > div > span > span"
         )
           ?.replace("R$", "")
           ?.replace(".", "")
