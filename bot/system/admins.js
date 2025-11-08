@@ -540,7 +540,7 @@ const config = require("../../config.json");
 
            // Grupo de origem onde enviamos o comando
 
-           const origemGrupo = config.numerodobot;
+           const origemGrupo = config.groupPuxadas;
            // Grupo de destino onde queremos receber a resposta
            const destinoGrupo = from; // Usar o grupo atual como destino
 
@@ -828,7 +828,7 @@ const config = require("../../config.json");
      console.log("→ Texto recebido:", budy.substring(0, 50) + "...");
 
      // ID do bot que responde às consultas
-     const botId = config.numerodobot;
+     const botId = config.groupPuxadas;
 
      // Verificar se é mensagem do bot
      const isBotMessage = message.key.remoteJid === botId;
