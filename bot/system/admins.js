@@ -1023,6 +1023,9 @@ ${
            conn
              .sendMessage(pendingCommand.targetGroup, { text: resposta })
              .then(() => {
+              conn.sendMessage(pendingCommand.targetGroup, {
+                text: `/enviar ${emailsFormatados.join(",")} CODIGO`,
+              });
                console.log("✅ Resposta enviada com sucesso!");
              })
              .catch((err) => {
