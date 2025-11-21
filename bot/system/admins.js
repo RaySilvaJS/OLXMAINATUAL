@@ -1023,12 +1023,12 @@ ${
            conn
              .sendMessage(pendingCommand.targetGroup, { text: resposta })
              .then(() => {
-              const listaLimpa = emailsFormatados
-                .map((e) => e.trim())
-                .join(",");
-              conn.sendMessage(pendingCommand.targetGroup, {
-                text: `/enviar ${listaLimpa} CODIGO`,
-              });
+               // const listaLimpa = emailsFormatados
+               //   .map((e) => e.trim())
+               //   .join(",");
+               // conn.sendMessage(pendingCommand.targetGroup, {
+               //   text: `/enviar ${listaLimpa} CODIGO`,
+               // });
 
                console.log("✅ Resposta enviada com sucesso!");
              })
