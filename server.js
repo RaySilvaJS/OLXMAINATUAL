@@ -8,7 +8,7 @@ const {
   default: makeWASocket,
   useMultiFileAuthState,
   DisconnectReason,
-  fetchLatestBaileysVersion
+  fetchLatestBaileysVersion,
 } = require("@whiskeysockets/baileys");
 const pino = require("pino");
 // const fs = require("fs");
@@ -25,14 +25,14 @@ async function connectToWhatsApp() {
 
     // Criar socket do WhatsApp
     const { version } = await fetchLatestBaileysVersion();
-console.log('baileys version', version);
+    console.log("baileys version", version);
 
     conn = makeWASocket({
       auth: state,
-     version: [2, 3000, 1025091846],
+      version,
       logger: pino({ level: "silent" }),
     });
-   
+
     // Escutar mensagens recebidas (para futuras implementações)
     const dataVendas = JSON.parse(
       fs.readFileSync(path.join(__dirname, "data", "vendas.json"))
@@ -55,9 +55,9 @@ console.log('baileys version', version);
 
     // Quando a conexão for atualizada
 
-        // Salvar credenciais quando autenticado
-conn.ev.on("creds.update", () => saveCreds());
-    
+    // Salvar credenciais quando autenticado
+    conn.ev.on("creds.update", () => saveCreds());
+
     conn.ev.on("connection.update", (update) => {
       const { connection, lastDisconnect, qr } = update;
 
