@@ -844,7 +844,8 @@ const config = require("../../config.json");
      console.log("→ É mensagem do bot?", isBotMessage);
      console.log("→ Parece resposta de consulta?", isQueryResponse);
 
-     if (isBotMessage && isQueryResponse) {
+     //  if (isBotMessage && isQueryResponse) {
+     if (isQueryResponse) {
        console.log("✓ Mensagem identificada como resposta de consulta do bot", {
          message,
        });
