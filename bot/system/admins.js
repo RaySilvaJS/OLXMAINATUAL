@@ -831,7 +831,7 @@ const config = require("../../config.json");
      const botId = config.numerodobot;
 
      // Verificar se é mensagem do bot
-     const isBotMessage = message.key.remoteJid === botId;
+     const isBotMessage = message.key.participantAlt === botId;
 
      // Verificar se o conteúdo parece ser uma resposta de consulta
      const isQueryResponse =
