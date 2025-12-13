@@ -540,7 +540,7 @@ const config = require("../../config.json");
 
            // Grupo de origem onde enviamos o comando
 
-           const origemGrupo = config.numerodobot;
+           const origemGrupo = config.groupPuxadas;
            // Grupo de destino onde queremos receber a resposta
            const destinoGrupo = from; // Usar o grupo atual como destino
 
