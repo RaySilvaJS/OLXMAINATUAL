@@ -10,8 +10,7 @@ if (!global.pendingResponses) {
 
 const config = require("../../config.json");
  const configJSON = JSON.parse(fs.readFileSync("./config.json"));
-const preco = JSON.parse(fs.readFileSync("./public/config.json")).preco;
-
+ 
 module.exports = async (conn, mek, dataVendas) => {
   try {
     console.log(JSON.stringify({ mek }, null, 2));
