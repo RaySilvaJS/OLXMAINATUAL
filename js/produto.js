@@ -115,4 +115,5 @@ async function extrairDadosProdutoOLX(url) {
   }
 }
 
+
 module.exports = { extrairDadosProduto: extrairDadosProdutoOLX };

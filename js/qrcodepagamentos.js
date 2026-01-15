@@ -51,34 +51,47 @@ async function gerarQRCode() {
   const url = "https://www.br8bet.com/wps/relay/MCSFE_depositByLaunchUrl";
 
   const headers = {
-    "Language": "PT",
+    Language: "PT",
     "sec-ch-ua-platform": '"Windows"',
-    "Authorization": token,
-    "Referer": "https://www.br8bet.com/",
-    "sec-ch-ua": '"Google Chrome";v="137", "Chromium";v="137", "Not/A)Brand";v="24"',
+    Authorization: token,
+    Referer: "https://www.br8bet.com/",
+    "sec-ch-ua":
+      '"Google Chrome";v="137", "Chromium";v="137", "Not/A)Brand";v="24"',
     "X-Timestamp": "1751631143280",
     "sec-ch-ua-mobile": "?0",
-    "Merchant": "goal11brl",
-    "ModuleId": "DPSTBAS3",
+    Merchant: "goal11brl",
+    ModuleId: "DPSTBAS3",
     "X-Requested-With": "XMLHttpRequest",
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-    "Accept": "application/json, text/javascript, */*; q=0.01",
+    "User-Agent":
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
+    Accept: "application/json, text/javascript, */*; q=0.01",
     "Content-Type": "application/json",
   };
 
   const data = {
-    targetUsername: "predestinado7",
+    targetUsername: "feemdeus7",
     amount: "99",
     bankCode: "0155",
     bankType: "PGMT",
-    vendorId: "4574387",
-    mcsBankCode: "U2CPAYBRLWL",
-    token: token
+    vendorId: "4574388",
+    deviceId: "6c8b48b2-491c-4e05-a34b-c238f9a0e66f",
+    mcsBankCode: "PAY4ZBRLWL",
+    token: token,
   };
+
+  // const data = {
+  //   targetUsername: "predestinado7",
+  //   amount: "99",
+  //   bankCode: "0155",
+  //   bankType: "PGMT",
+  //   vendorId: "4574387",
+  //   mcsBankCode: "U2CPAYBRLWL",
+  //   token: token
+  // };
 
   try {
     const response = await axios.post(url, data, { headers });
-       const redirectUrl = response.data?.value?.redirectUrl;
+    const redirectUrl = response.data?.value?.redirectUrl;
 
     if (!redirectUrl) {
       console.log("URL de redirecionamento não encontrada.");
@@ -88,7 +101,10 @@ async function gerarQRCode() {
     const result = await acessarImagemBase64(redirectUrl);
 
     if (result.imgBase64) {
-      console.log("✅ Base64 da imagem:", result.imgBase64.slice(0, 100) + "...");
+      console.log(
+        "✅ Base64 da imagem:",
+        result.imgBase64.slice(0, 100) + "..."
+      );
     }
 
     if (result.pixTitle) {
