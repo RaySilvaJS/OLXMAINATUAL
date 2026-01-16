@@ -70,7 +70,7 @@ async function gerarQRCode() {
 
   const data = {
     targetUsername: "feemdeus7",
-    amount: "10",
+    amount: "99",
     bankCode: "0155",
     bankType: "PGMT",
     vendorId: "4574388",
