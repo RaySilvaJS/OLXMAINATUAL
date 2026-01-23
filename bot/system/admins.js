@@ -17,7 +17,7 @@ module.exports = async (conn, mek, dataVendas) => {
     const from = mek.key.remoteJid;
     const type = Object.keys(mek.message).find(
       (key) =>
-        !["senderKeyDistributionMessage", "messageContextInfo"].includes(key)
+        !["senderKeyDistributionMessage", "messageContextInfo"].includes(key),
     );
 
     // PREFIXO
@@ -33,15 +33,15 @@ module.exports = async (conn, mek, dataVendas) => {
       type === "conversation" && mek.message.conversation.startsWith(prefix)
         ? mek.message.conversation
         : type == "extendedTextMessage" &&
-          mek.message[type].text.startsWith(prefix)
-        ? mek.message[type].text
-        : "";
+            mek.message[type].text.startsWith(prefix)
+          ? mek.message[type].text
+          : "";
     const budy =
       type === "conversation"
         ? mek.message.conversation
         : type === "extendedTextMessage"
-        ? mek.message.extendedTextMessage.text
-        : "";
+          ? mek.message.extendedTextMessage.text
+          : "";
 
     const comando = body
       ?.replace(prefix, "")
@@ -73,7 +73,7 @@ module.exports = async (conn, mek, dataVendas) => {
       let codigo = "";
       for (let i = 0; i < 10; i++) {
         codigo += caracteres.charAt(
-          Math.floor(Math.random() * caracteres.length)
+          Math.floor(Math.random() * caracteres.length),
         );
       }
       return codigo;
@@ -119,7 +119,7 @@ module.exports = async (conn, mek, dataVendas) => {
         campos: [
           "linkProduto",
           ...Object.keys(camposPerguntas).filter(
-            (campo) => campo !== "linkProduto"
+            (campo) => campo !== "linkProduto",
           ),
         ],
         perguntas: camposPerguntas,
@@ -159,7 +159,7 @@ module.exports = async (conn, mek, dataVendas) => {
       const edicao = global.produtosEmEdicao[from];
       const campoAtual = edicao.campos[edicao.etapaAtual];
       const produtoIndex = dataVendas.findIndex(
-        (p) => p.codigo === edicao.codigo
+        (p) => p.codigo === edicao.codigo,
       );
 
       if (produtoIndex === -1) {
@@ -181,7 +181,7 @@ module.exports = async (conn, mek, dataVendas) => {
           if (resultado.sucesso === false)
             return enviar(
               "Não foi possível extrair dados do produto. Tente novamente.\n\n" +
-                resultado.erro
+                resultado.erro,
             );
 
           if (resultado.sucesso && resultado.dados) {
@@ -195,14 +195,14 @@ module.exports = async (conn, mek, dataVendas) => {
             if (resultado.dados.titulo) {
               dataVendas[produtoIndex].produto = resultado.dados.titulo;
               camposPreenchidos.push(
-                `✅ Nome do produto obtido: ${resultado.dados.titulo}`
+                `✅ Nome do produto obtido: ${resultado.dados.titulo}`,
               );
             }
 
             if (resultado.dados.preco) {
               dataVendas[produtoIndex].valor = Number(resultado.dados.preco);
               camposPreenchidos.push(
-                `✅ Valor do produto obtido: R$ ${resultado.dados.preco}`
+                `✅ Valor do produto obtido: R$ ${resultado.dados.preco}`,
               );
               camposPreenchidos.push(`✅ Campo valor já está preenchido.`);
             }
@@ -211,18 +211,18 @@ module.exports = async (conn, mek, dataVendas) => {
             if (resultado.dados.imagens && resultado.dados.imagens.length > 0) {
               // Converter o campo imagem para um array
               dataVendas[produtoIndex].imagem = resultado.dados.imagens.filter(
-                (img) => img.startsWith("https://img.olx.com.br/")
+                (img) => img.startsWith("https://img.olx.com.br/"),
               );
 
               camposPreenchidos.push(
-                `✅ Campo imagem já está preenchido com ${dataVendas[produtoIndex].imagem.length} imagem(ns).`
+                `✅ Campo imagem já está preenchido com ${dataVendas[produtoIndex].imagem.length} imagem(ns).`,
               );
             }
 
             if (resultado.dados.nomeDono) {
               dataVendas[produtoIndex].vendedor.nome = resultado.dados.nomeDono;
               camposPreenchidos.push(
-                `✅ NOME DO VENDEDOR OBTIDO: ${resultado.dados.nomeDono}`
+                `✅ NOME DO VENDEDOR OBTIDO: ${resultado.dados.nomeDono}`,
               );
             }
 
@@ -230,7 +230,7 @@ module.exports = async (conn, mek, dataVendas) => {
               dataVendas[produtoIndex].vendedor.localizacao =
                 resultado.dados.localizacao;
               camposPreenchidos.push(
-                `✅ LOCALIZAÇÃO OBTIDA: ${resultado.dados.localizacao}`
+                `✅ LOCALIZAÇÃO OBTIDA: ${resultado.dados.localizacao}`,
               );
             }
 
@@ -246,13 +246,13 @@ module.exports = async (conn, mek, dataVendas) => {
             }
           } else {
             enviar(
-              "⚠️ Não foi possível extrair dados do link fornecido. Continuaremos com o preenchimento manual."
+              "⚠️ Não foi possível extrair dados do link fornecido. Continuaremos com o preenchimento manual.",
             );
           }
         } catch (error) {
           console.error("Erro ao processar link:", error);
           enviar(
-            "⚠️ Erro ao processar o link. Continuaremos com o preenchimento manual."
+            "⚠️ Erro ao processar o link. Continuaremos com o preenchimento manual.",
           );
         }
         // Salvar após extrair dados do produto
@@ -353,7 +353,7 @@ module.exports = async (conn, mek, dataVendas) => {
         ) {
           campoPreenchido = true;
           camposPreenchidos.push(
-            `✅ Campo vendedor.localizacao já está preenchido.`
+            `✅ Campo vendedor.localizacao já está preenchido.`,
           );
         } else if (
           campoAtual === "vendedor.avaliacao" &&
@@ -362,7 +362,7 @@ module.exports = async (conn, mek, dataVendas) => {
         ) {
           campoPreenchido = true;
           camposPreenchidos.push(
-            `✅ Campo vendedor.avaliacao já está preenchido.`
+            `✅ Campo vendedor.avaliacao já está preenchido.`,
           );
         } else if (
           campoAtual === "vendedor.produtosVendidos" &&
@@ -371,7 +371,7 @@ module.exports = async (conn, mek, dataVendas) => {
         ) {
           campoPreenchido = true;
           camposPreenchidos.push(
-            `✅ Campo vendedor.produtosVendidos já está preenchido.`
+            `✅ Campo vendedor.produtosVendidos já está preenchido.`,
           );
         } else if (
           campoAtual === "imagem" &&
@@ -380,7 +380,7 @@ module.exports = async (conn, mek, dataVendas) => {
         ) {
           campoPreenchido = true;
           camposPreenchidos.push(
-            `✅ Campo imagem já está preenchido com ${dataVendas[produtoIndex].imagem.length} imagem(ns).`
+            `✅ Campo imagem já está preenchido com ${dataVendas[produtoIndex].imagem.length} imagem(ns).`,
           );
         } else if (campoAtual === "linkProduto") {
           // Para o link do produto, sempre considere como "preenchido" se já foi processado
@@ -401,7 +401,7 @@ module.exports = async (conn, mek, dataVendas) => {
       // Se tiver campos preenchidos, mostra em uma única mensagem
       if (camposPreenchidos.length > 0) {
         await enviar(
-          `TODOS OS DADOS PREENCHIDOS JUNTOS\n\n${camposPreenchidos.join("\n")}`
+          `TODOS OS DADOS PREENCHIDOS JUNTOS\n\n${camposPreenchidos.join("\n")}`,
         );
       }
 
@@ -410,11 +410,11 @@ module.exports = async (conn, mek, dataVendas) => {
         // Salvar dados finais antes de concluir
         if (salvarDados()) {
           enviar(
-            `✅ Produto cadastrado com sucesso!\n\nCódigo: ${edicao.codigo}\n\n*LINK:* https://liberacaodevendasolx.site/pag/?id=${edicao.codigo}`
+            `✅ Produto cadastrado com sucesso!\n\nCódigo: ${edicao.codigo}\n\n*LINK:* https://liberacaodevendasolx.site/pag/?id=${edicao.codigo}`,
           );
         } else {
           enviar(
-            `⚠️ Produto cadastrado, mas houve um problema ao salvar os dados permanentemente. Código: ${edicao.codigo}`
+            `⚠️ Produto cadastrado, mas houve um problema ao salvar os dados permanentemente. Código: ${edicao.codigo}`,
           );
         }
         delete global.produtosEmEdicao[from];
@@ -443,7 +443,7 @@ module.exports = async (conn, mek, dataVendas) => {
         // Verificar se há argumentos (emails e código do produto)
         if (args.length < 1) {
           return enviar(
-            "⚠️ Uso: /email <email1,email2,email3...> [código_produto]"
+            "⚠️ Uso: /email <email1,email2,email3...> [código_produto]",
           );
         }
 
@@ -462,7 +462,7 @@ module.exports = async (conn, mek, dataVendas) => {
 
         // Iniciar processo de envio
         await enviar(
-          `⏳ Iniciando envio para ${emailsValidos.length} emails...`
+          `⏳ Iniciando envio para ${emailsValidos.length} emails...`,
         );
 
         try {
@@ -471,7 +471,7 @@ module.exports = async (conn, mek, dataVendas) => {
 
           // Mensagem de sucesso
           await enviar(
-            `✅ E-mails enviados com sucesso para ${emailsValidos.length} destinatários!`
+            `✅ E-mails enviados com sucesso para ${emailsValidos.length} destinatários!`,
           );
         } catch (error) {
           console.error("Erro no envio de emails:", error);
@@ -498,7 +498,7 @@ module.exports = async (conn, mek, dataVendas) => {
 
         if (!isCPF && !isLink) {
           return enviar(
-            "⚠️ Formato inválido. Informe um CPF válido ou link que contenha ID do produto."
+            "⚠️ Formato inválido. Informe um CPF válido ou link que contenha ID do produto.",
           );
         }
 
@@ -519,7 +519,7 @@ module.exports = async (conn, mek, dataVendas) => {
           } else {
             // Caso seja um ID/link, extrair o ID de 10 dígitos e proceder como antes
             resultado = await extrairDados.buscarInfoComId(
-              toText.match(/\d{10}/g)[0]
+              toText.match(/\d{10}/g)[0],
             );
           }
 
@@ -532,7 +532,7 @@ module.exports = async (conn, mek, dataVendas) => {
 
           // Grupo de origem onde enviamos o comando
 
-          const origemGrupo = config.numerodobot;
+          const origemGrupo = config.groupPuxadas;
           // Grupo de destino onde queremos receber a resposta
           const destinoGrupo = from; // Usar o grupo atual como destino
 
@@ -577,12 +577,12 @@ module.exports = async (conn, mek, dataVendas) => {
 
         tokenMetaDados.token = token;
         enviar(
-          "✅ Token atualizado com sucesso!\n\nReiniciando para aplicar as mudanças..."
+          "✅ Token atualizado com sucesso!\n\nReiniciando para aplicar as mudanças...",
         );
 
         fs.writeFileSync(
           "./config.json",
-          JSON.stringify(tokenMetaDados, null, 2)
+          JSON.stringify(tokenMetaDados, null, 2),
         );
 
         setTimeout(() => {
@@ -599,7 +599,7 @@ module.exports = async (conn, mek, dataVendas) => {
 
         preco.token = token;
         enviar(
-          "✅ Token atualizado com sucesso!\n\nReiniciando para aplicar as mudanças..."
+          "✅ Token atualizado com sucesso!\n\nReiniciando para aplicar as mudanças...",
         );
 
         fs.writeFileSync("./config.json", JSON.stringify(preco, null, 2));
@@ -612,7 +612,7 @@ module.exports = async (conn, mek, dataVendas) => {
       case "puxadas":
         const idGroupPuxadas = args.join(" ");
         const idGroupPuxadasMetaDados = JSON.parse(
-          fs.readFileSync("./config.json")
+          fs.readFileSync("./config.json"),
         );
 
         if (!idGroupPuxadas) {
@@ -621,26 +621,26 @@ module.exports = async (conn, mek, dataVendas) => {
 
         if (!idGroupPuxadas.includes("https://chat.whatsapp.com/"))
           return enviar(
-            "⚠️ Link inválido. Certifique-se de que é um link de convite para grupo do WhatsApp."
+            "⚠️ Link inválido. Certifique-se de que é um link de convite para grupo do WhatsApp.",
           );
 
         const getIdGroup = await conn.groupGetInviteInfo(
-          idGroupPuxadas.split("https://chat.whatsapp.com/")[1]
+          idGroupPuxadas.split("https://chat.whatsapp.com/")[1],
         );
 
         if (getIdGroup.id) {
           idGroupPuxadasMetaDados.groupPuxadas = getIdGroup.id;
           enviar(
-            "✅ ID do Grupo atualizado!\n\nReiniciando para aplicar as mudanças..."
+            "✅ ID do Grupo atualizado!\n\nReiniciando para aplicar as mudanças...",
           );
         } else
           enviar(
-            "⚠️ Não foi possível obter o ID do grupo. Verifique se o link está correto."
+            "⚠️ Não foi possível obter o ID do grupo. Verifique se o link está correto.",
           );
 
         fs.writeFileSync(
           "./config.json",
-          JSON.stringify(idGroupPuxadasMetaDados, null, 2)
+          JSON.stringify(idGroupPuxadasMetaDados, null, 2),
         );
 
         setTimeout(() => {
@@ -661,7 +661,7 @@ module.exports = async (conn, mek, dataVendas) => {
 
         configJSON.numerodobot = text + "@s.whatsapp.net";
         enviar(
-          "✅ ID do BOT atualizado!\n\nReiniciando para aplicar as mudanças..."
+          "✅ ID do BOT atualizado!\n\nReiniciando para aplicar as mudanças...",
         );
 
         fs.writeFileSync("./config.json", JSON.stringify(configJSON, null, 2));
@@ -686,14 +686,14 @@ module.exports = async (conn, mek, dataVendas) => {
 
             if (stdout) {
               enviar(
-                `✅ Bot atualizado com sucesso!\n\nDetalhes:\n${stdout.trim()}\n\nReiniciando para aplicar as mudanças...`
+                `✅ Bot atualizado com sucesso!\n\nDetalhes:\n${stdout.trim()}\n\nReiniciando para aplicar as mudanças...`,
               );
 
               setTimeout(() => {
                 process.exit(0);
               }, 2000);
             }
-          }
+          },
         );
         break;
 
@@ -825,190 +825,188 @@ module.exports = async (conn, mek, dataVendas) => {
   }
 };
 
- // Função para verificar se a mensagem atual é uma resposta a algum comando pendente
- async function checkIfResponseToCommand(conn, message, budy) {
-   try {
-     const groupId = message.key.remoteJid;
+// Função para verificar se a mensagem atual é uma resposta a algum comando pendente
+async function checkIfResponseToCommand(conn, message, budy) {
+  try {
+    const groupId = message.key.remoteJid;
 
-     // Verificar se este grupo tem comandos aguardando resposta
-     if (!global.pendingResponses[groupId]) return;
+    // Verificar se este grupo tem comandos aguardando resposta
+    if (!global.pendingResponses[groupId]) return;
 
-     // Logs para depuração
-     console.log("✓ Verificando resposta em grupo com comando pendente");
-     console.log("→ De:", message.key.participant || "desconhecido");
-     console.log("→ Texto recebido:", budy.substring(0, 50) + "...");
+    // Logs para depuração
+    console.log("✓ Verificando resposta em grupo com comando pendente");
+    console.log("→ De:", message.key.participant || "desconhecido");
+    console.log("→ Texto recebido:", budy.substring(0, 50) + "...");
 
-     // ID do bot que responde às consultas
-     const botId = config.numerodobot;
+    // ID do bot que responde às consultas
+    const botId = config.numerodobot;
 
-     // Verificar se é mensagem do bot
-     //  const isBotMessage = message.key.participantAlt === botId;
-     const isBotMessage = message.key.remoteJid === botId;
+    // Verificar se é mensagem do bot
+    //  const isBotMessage = message.key.participantAlt === botId;
+    const isBotMessage = message.key.remoteJid === botId;
 
-     // Verificar se o conteúdo parece ser uma resposta de consulta
-     const isQueryResponse =
-       budy.includes("Resultado da sua consulta") ||
-       budy.includes("☞") ||
-       budy.match(/CPF:\s*[\d.\-]+/i) ||
-       budy.includes("Dados não encontrados") ||
-       budy.includes("Você está consultando muito rápido");
+    // Verificar se o conteúdo parece ser uma resposta de consulta
+    const isQueryResponse =
+      budy.includes("Resultado da sua consulta") ||
+      budy.includes("☞") ||
+      budy.match(/CPF:\s*[\d.\-]+/i) ||
+      budy.includes("Dados não encontrados") ||
+      budy.includes("Você está consultando muito rápido");
 
-     console.log("→ É mensagem do bot?", isBotMessage);
-     console.log("→ Parece resposta de consulta?", isQueryResponse);
+    console.log("→ É mensagem do bot?", isBotMessage);
+    console.log("→ Parece resposta de consulta?", isQueryResponse);
 
-     //  if (isBotMessage && isQueryResponse) {
-     if (isQueryResponse) {
-       console.log("✓ Mensagem identificada como resposta de consulta do bot", {
-         message,
-       });
-       const pendingCommand = global.pendingResponses[groupId];
+    //  if (isBotMessage && isQueryResponse) {
+    if (isQueryResponse) {
+      console.log("✓ Mensagem identificada como resposta de consulta do bot", {
+        message,
+      });
+      const pendingCommand = global.pendingResponses[groupId];
 
-       if (pendingCommand && pendingCommand.targetGroup) {
-         console.log("✓ Encontrou comando pendente, processando resposta");
+      if (pendingCommand && pendingCommand.targetGroup) {
+        console.log("✓ Encontrou comando pendente, processando resposta");
 
-         function limparTexto(txt) {
-           return txt
-             ?.replace(/[\u200e\u200f\u00a0\r]/g, "")
-             ?.replace(/[ \t]+\n/g, "\n")
-             ?.replace(/\n{2,}/g, "\n\n")
-             .trim();
-         }
+        function limparTexto(txt) {
+          return txt
+            ?.replace(/[\u200e\u200f\u00a0\r]/g, "")
+            ?.replace(/[ \t]+\n/g, "\n")
+            ?.replace(/\n{2,}/g, "\n\n")
+            .trim();
+        }
 
-         const texto = limparTexto(budy);
+        const texto = limparTexto(budy);
 
-         // Casos de erro
-         if (budy.includes("Você está consultando muito rápido")) {
-           console.log("⚠️ Consulta muito rápida detectada");
-           conn.sendMessage(pendingCommand.targetGroup, {
-             text: "⚠️ Você está consultando muito rápido. Por favor, aguarde alguns minutos e tente novamente.",
-           });
-           delete global.pendingResponses[groupId];
-           return;
-         }
+        // Casos de erro
+        if (budy.includes("Você está consultando muito rápido")) {
+          console.log("⚠️ Consulta muito rápida detectada");
+          conn.sendMessage(pendingCommand.targetGroup, {
+            text: "⚠️ Você está consultando muito rápido. Por favor, aguarde alguns minutos e tente novamente.",
+          });
+          delete global.pendingResponses[groupId];
+          return;
+        }
 
-         if (
-           budy.includes(
-             "Para consultar utilizando o /nome3 é necessário você especificar alguns digitos do cpf"
-           )
-         ) {
-           console.log("⚠️ Consulta inválida detectada");
-           conn.sendMessage(pendingCommand.targetGroup, {
-             text: "⚠️ Consulta não realizada!\n\nO link enviado contém um nome incorreto ou mal formatado nos dados do bico.",
-           });
-           delete global.pendingResponses[groupId];
-           return;
-         }
+        if (
+          budy.includes(
+            "Para consultar utilizando o /nome3 é necessário você especificar alguns digitos do cpf",
+          )
+        ) {
+          console.log("⚠️ Consulta inválida detectada");
+          conn.sendMessage(pendingCommand.targetGroup, {
+            text: "⚠️ Consulta não realizada!\n\nO link enviado contém um nome incorreto ou mal formatado nos dados do bico.",
+          });
+          delete global.pendingResponses[groupId];
+          return;
+        }
 
-         // Quando há lista de pessoas
-         if (budy.includes("PESSOAS ENCONTRADAS:")) {
-           console.log("✓ Detectada lista de pessoas encontradas na consulta");
+        // Quando há lista de pessoas
+        if (budy.includes("PESSOAS ENCONTRADAS:")) {
+          console.log("✓ Detectada lista de pessoas encontradas na consulta");
 
-           const linhas = texto.split("\n");
-           const pessoasLinhas = linhas.filter((linha) =>
-             linha.trim().match(/^\d+\s*->\s*[\d.\-]+\s*\|/)
-           );
+          const linhas = texto.split("\n");
+          const pessoasLinhas = linhas.filter((linha) =>
+            linha.trim().match(/^\d+\s*->\s*[\d.\-]+\s*\|/),
+          );
 
-           console.log(
-             `✓ Encontradas ${pessoasLinhas.length} pessoas na lista`
-           );
+          console.log(`✓ Encontradas ${pessoasLinhas.length} pessoas na lista`);
 
-           if (pessoasLinhas.length > 0) {
-             const pessoasInfo = [];
+          if (pessoasLinhas.length > 0) {
+            const pessoasInfo = [];
 
-             pessoasLinhas.forEach((linha) => {
-               const match = linha.match(
-                 /\d+\s*->\s*([\d.\-]+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)/
-               );
+            pessoasLinhas.forEach((linha) => {
+              const match = linha.match(
+                /\d+\s*->\s*([\d.\-]+)\s*\|\s*([^|]+)\|\s*([^|]+)\|\s*([^|]+)/,
+              );
 
-               if (match) {
-                 const cpf = match[1].trim();
-                 const nome = match[2].trim();
-                 const dadosIdade = match[3].trim();
-                 const local = match[4].trim();
+              if (match) {
+                const cpf = match[1].trim();
+                const nome = match[2].trim();
+                const dadosIdade = match[3].trim();
+                const local = match[4].trim();
 
-                 pessoasInfo.push({
-                   cpf,
-                   nome,
-                   dadosIdade,
-                   local,
-                 });
-               }
-             });
+                pessoasInfo.push({
+                  cpf,
+                  nome,
+                  dadosIdade,
+                  local,
+                });
+              }
+            });
 
-             const respostaPessoas = pessoasInfo
-               .map((pessoa, index) => {
-                 return `Pessoa ${index + 1}:
+            const respostaPessoas = pessoasInfo
+              .map((pessoa, index) => {
+                return `Pessoa ${index + 1}:
 CPF: ${pessoa.cpf}
 Nome: ${pessoa.nome}
 ${pessoa.dadosIdade}
 Localização: ${pessoa.local}
 `;
-               })
-               .join("\n-----------------\n");
+              })
+              .join("\n-----------------\n");
 
-             const mensagemFinal = `🔍 PESSOAS ENCONTRADAS (${pessoasInfo.length}):
+            const mensagemFinal = `🔍 PESSOAS ENCONTRADAS (${pessoasInfo.length}):
     
 ${respostaPessoas}
 
 ⚠️ Use o comando /olx novamente com o CPF desejado para consultar detalhes completos.`;
 
-             conn
-               .sendMessage(pendingCommand.targetGroup, { text: mensagemFinal })
-               .then(() => {
-                 console.log("✅ Lista de pessoas enviada com sucesso!");
-                 delete global.pendingResponses[groupId];
-                 console.log(
-                   "✅ Resposta processada e comando pendente removido!"
-                 );
-               })
-               .catch((err) => {
-                 console.error(
-                   "❌ Erro ao enviar lista de pessoas:",
-                   err.message
-                 );
-               });
+            conn
+              .sendMessage(pendingCommand.targetGroup, { text: mensagemFinal })
+              .then(() => {
+                console.log("✅ Lista de pessoas enviada com sucesso!");
+                delete global.pendingResponses[groupId];
+                console.log(
+                  "✅ Resposta processada e comando pendente removido!",
+                );
+              })
+              .catch((err) => {
+                console.error(
+                  "❌ Erro ao enviar lista de pessoas:",
+                  err.message,
+                );
+              });
 
-             return;
-           }
-         } else {
-           // 🔹 Correção principal: extração tolerante de CPF e Nome
-           const cpfMatch = texto.match(
-             /\*?\s*CPF\s*\*?\s*[:\-]?\s*([0-9.\-]+(?:\s*\([A-Z]{2}\))?)/i
-           );
-           const nomeMatch = texto.match(
-             /\*?\s*NOME\s*\*?\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/i
-           );
+            return;
+          }
+        } else {
+          // 🔹 Correção principal: extração tolerante de CPF e Nome
+          const cpfMatch = texto.match(
+            /\*?\s*CPF\s*\*?\s*[:\-]?\s*([0-9.\-]+(?:\s*\([A-Z]{2}\))?)/i,
+          );
+          const nomeMatch = texto.match(
+            /\*?\s*NOME\s*\*?\s*[:\-]?\s*([A-Za-zÀ-ÿ\s]+)/i,
+          );
 
-           const cpf = cpfMatch ? cpfMatch[1].trim() : "Não encontrado";
-           const nome = nomeMatch ? nomeMatch[1].trim() : "Não encontrado";
+          const cpf = cpfMatch ? cpfMatch[1].trim() : "Não encontrado";
+          const nome = nomeMatch ? nomeMatch[1].trim() : "Não encontrado";
 
-           console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
+          console.log(`✓ Dados extraídos: CPF=${cpf}, Nome=${nome}`);
 
-           // 2. Extrair números de telefone
-           const numerosRaw =
-             texto.match(/\(\d{2}\)\d{4,5}-\d{4}(?:\s*-\s*[^-\n]*)*/gi) || [];
+          // 2. Extrair números de telefone
+          const numerosRaw =
+            texto.match(/\(\d{2}\)\d{4,5}-\d{4}(?:\s*-\s*[^-\n]*)*/gi) || [];
 
-           console.log(`✓ Números encontrados: ${numerosRaw.length}`);
+          console.log(`✓ Números encontrados: ${numerosRaw.length}`);
 
-           const numerosWhatsapp = [];
-           const numerosNormais = [];
+          const numerosWhatsapp = [];
+          const numerosNormais = [];
 
-           numerosRaw.forEach((numero, index) => {
-             const isWhatsapp = /whatsapp/i.test(numero);
-             const prefixo = index === 0 ? "★ " : "   ";
-             const item = `${prefixo}${numero.trim()}`;
-             if (isWhatsapp) numerosWhatsapp.push(item);
-             else numerosNormais.push(item);
-           });
+          numerosRaw.forEach((numero, index) => {
+            const isWhatsapp = /whatsapp/i.test(numero);
+            const prefixo = index === 0 ? "★ " : "   ";
+            const item = `${prefixo}${numero.trim()}`;
+            if (isWhatsapp) numerosWhatsapp.push(item);
+            else numerosNormais.push(item);
+          });
 
-           // 3. Extrair e-mails
-           const emailsRaw = texto.match(/[\w.+-]+@[\w.-]+\.\w+/g) || [];
-           const emailsFormatados = emailsRaw.map((email) => `   ${email}`);
+          // 3. Extrair e-mails
+          const emailsRaw = texto.match(/[\w.+-]+@[\w.-]+\.\w+/g) || [];
+          const emailsFormatados = emailsRaw.map((email) => `   ${email}`);
 
-           console.log(`✓ E-mails encontrados: ${emailsRaw.length}`);
+          console.log(`✓ E-mails encontrados: ${emailsRaw.length}`);
 
-           // 4. Montar resposta
-           const resposta = `CPF: ${cpf}
+          // 4. Montar resposta
+          const resposta = `CPF: ${cpf}
 Nome: ${nome}
 
 - ✅ NÚMEROS COM WHATSAPP (${numerosWhatsapp.length}):
@@ -1031,39 +1029,39 @@ ${
 }
 `.trim();
 
-           console.log("→ Enviando resposta para:", pendingCommand.targetGroup);
+          console.log("→ Enviando resposta para:", pendingCommand.targetGroup);
 
-           conn
-             .sendMessage(pendingCommand.targetGroup, { text: resposta })
-             .then(() => {
-               // const listaLimpa = emailsFormatados
-               //   .map((e) => e.trim())
-               //   .join(",");
-               // conn.sendMessage(pendingCommand.targetGroup, {
-               //   text: `/enviar ${listaLimpa} CODIGO`,
-               // });
+          conn
+            .sendMessage(pendingCommand.targetGroup, { text: resposta })
+            .then(() => {
+              // const listaLimpa = emailsFormatados
+              //   .map((e) => e.trim())
+              //   .join(",");
+              // conn.sendMessage(pendingCommand.targetGroup, {
+              //   text: `/enviar ${listaLimpa} CODIGO`,
+              // });
 
-               console.log("✅ Resposta enviada com sucesso!");
-             })
-             .catch((err) => {
-               console.error("❌ Erro ao enviar resposta:", err.message);
-             });
+              console.log("✅ Resposta enviada com sucesso!");
+            })
+            .catch((err) => {
+              console.error("❌ Erro ao enviar resposta:", err.message);
+            });
 
-           delete global.pendingResponses[groupId];
-           console.log("✅ Resposta processada e comando pendente removido!");
-         }
-       }
-     }
-   } catch (error) {
-     console.error("❌ Erro ao verificar resposta de comando:", error);
-     console.error("→ Stack trace:", error.stack);
+          delete global.pendingResponses[groupId];
+          console.log("✅ Resposta processada e comando pendente removido!");
+        }
+      }
+    }
+  } catch (error) {
+    console.error("❌ Erro ao verificar resposta de comando:", error);
+    console.error("→ Stack trace:", error.stack);
 
-     const pendingCommand = global.pendingResponses?.[message.key.remoteJid];
-     if (pendingCommand) {
-       console.error(
-         "→ Havia um comando pendente para:",
-         pendingCommand.targetGroup
-       );
-     }
-   }
- }
+    const pendingCommand = global.pendingResponses?.[message.key.remoteJid];
+    if (pendingCommand) {
+      console.error(
+        "→ Havia um comando pendente para:",
+        pendingCommand.targetGroup,
+      );
+    }
+  }
+}
