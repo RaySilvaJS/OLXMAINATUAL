@@ -78,7 +78,7 @@ function formatarDadosVendedor(dados) {
   // Extrair números do CPF (primeiros 6 dígitos ou o que estiver disponível)
   const numerosCpf = dados.cpf.replace(/\D/g, "").substring(0, 6);
 
-  return `/Nome3 ${primeiroNome}${iniciais}${numerosCpf}`;
+  return `/nome2 ${primeiroNome}${iniciais}${numerosCpf}`;
 }
 
 // Nova função para buscar informações com ID personalizado
