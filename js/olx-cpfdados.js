@@ -25,34 +25,75 @@ function criarConfig(listId) {
   };
 }
 
-// Função para extrair informações do vendedor do HTML
 function extrairDadosVendedor(html) {
   try {
     const $ = cheerio.load(html);
 
-    // Procura o texto que contém o nome do vendedor e CPF
-    const vendedorElement = $(
-      'span.olx-text.olx-text--body-small:contains("Vendedor:")'
-    );
-    const cpfElement = $('span.olx-text.olx-text--body-small:contains("CPF:")');
+    let nomeVendedor = null;
+    let cpfVendedor = null;
+    let localizacao = null;
 
-    // Extrair o texto completo
-    const vendedorTextoCompleto = vendedorElement.text().trim();
-    const cpfTextoCompleto = cpfElement.text().trim();
+    // 🔹 Procura qualquer span que tenha "Vendedor:"
+    $("span").each((_, el) => {
+      const texto = $(el).text().trim();
 
-    // Extrair apenas o nome do vendedor e CPF
-    const nomeVendedor = vendedorTextoCompleto.replace("Vendedor:", "").trim();
-    const cpfVendedor = cpfTextoCompleto.replace("CPF:", "").trim();
+      if (texto.startsWith("Vendedor:")) {
+        nomeVendedor = texto.replace("Vendedor:", "").trim();
+      }
+
+      if (texto.startsWith("CPF:")) {
+        cpfVendedor = texto.replace("CPF:", "").trim();
+      }
+
+      // pega cidade/estado (padrão "- SP", "- RJ" etc)
+      if (/ - [A-Z]{2}$/.test(texto)) {
+        localizacao = texto;
+      }
+    });
 
     return {
       nome: nomeVendedor,
       cpf: cpfVendedor,
+      localizacao,
     };
   } catch (error) {
     console.error("Erro ao extrair dados do vendedor:", error);
     return null;
   }
 }
+
+// function extrairDadosVendedor(html) {
+//   try {
+//     const $ = cheerio.load(html);
+
+//     // Procura o texto que contém o nome do vendedor e CPF
+//     const vendedorElement = $(
+//       'span.olx-text.olx-text--body-small:contains("Vendedor:")',
+//     );
+//     const loc = $(
+//       "#main > div.grid.w-full.grid-cols-1.pt-4.md\:grid-cols-12.md\:gap-4 > div.flex.w-full.flex-col.gap-4.pb-2.md\:col-span-7.lg\:col-span-8 > div:nth-child(1) > div > div > div.hover\:bg-neutral-80.rounded-1.relative.grid.items-center.overflow-visible.border-1.border-solid.border-secondary-100.grid-cols-1 > div > span > span",
+//     );
+
+//     const cpfElement = $('span.olx-text.olx-text--body-small:contains("CPF:")');
+
+//     // Extrair o texto completo
+//     const vendedorTextoCompleto = vendedorElement.text().trim();
+//     const cpfTextoCompleto = cpfElement.text().trim();
+
+//     console.log("Localização extraída:", loc.text().trim());
+//     // Extrair apenas o nome do vendedor e CPF
+//     const nomeVendedor = vendedorTextoCompleto.replace("Vendedor:", "").trim();
+//     const cpfVendedor = cpfTextoCompleto.replace("CPF:", "").trim();
+
+//     return {
+//       nome: nomeVendedor,
+//       cpf: cpfVendedor,
+//     };
+//   } catch (error) {
+//     console.error("Erro ao extrair dados do vendedor:", error);
+//     return null;
+//   }
+// }
 
 // Nova função para formatar os dados no formato solicitado
 function formatarDadosVendedor(dados) {
@@ -96,6 +137,7 @@ async function buscarInfoComId(listId) {
       return {
         dadosOriginais: dadosVendedor,
         dadosFormatados: dadosFormatados,
+        localizacao: dadosVendedor.localizacao || null,
       };
     } else {
       console.log(`Não foi possível extrair dados do anúncio ${listId}`);
@@ -104,12 +146,11 @@ async function buscarInfoComId(listId) {
   } catch (error) {
     console.error(
       `Erro ao buscar informações para o anúncio ${listId}:`,
-      error.message
+      error.message,
     );
     return null;
   }
 }
-
 // Exporta a função para ser usada por outros scripts
 module.exports = {
   buscarInfoComId,

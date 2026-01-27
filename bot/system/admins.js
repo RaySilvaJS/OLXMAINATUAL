@@ -515,6 +515,7 @@ module.exports = async (conn, mek, dataVendas) => {
             // Chamar função específica para consulta de CPF
             resultado = {
               dadosFormatados: `/cpf ${cpfLimpo}`, // Este formato parece ser o que o sistema espera para CPFs
+              localizacao: null, // Para CPF, não há localização
             };
           } else {
             // Caso seja um ID/link, extrair o ID de 10 dígitos e proceder como antes
@@ -547,6 +548,7 @@ module.exports = async (conn, mek, dataVendas) => {
                 command: resultado.dadosFormatados,
                 timestamp: Date.now(),
                 targetGroup: destinoGrupo, // para onde enviar a resposta quando receber
+                location: resultado.localizacao, // Adicionar localização para filtro
               };
 
               enviar("✅ Consulta enviada! Aguardando resposta...");
@@ -911,7 +913,7 @@ async function checkIfResponseToCommand(conn, message, budy) {
           console.log(`✓ Encontradas ${pessoasLinhas.length} pessoas na lista`);
 
           if (pessoasLinhas.length > 0) {
-            const pessoasInfo = [];
+            let pessoasInfo = [];
 
             pessoasLinhas.forEach((linha) => {
               const match = linha.match(
@@ -932,6 +934,28 @@ async function checkIfResponseToCommand(conn, message, budy) {
                 });
               }
             });
+
+            // Filtrar pela localização se disponível
+            if (pendingCommand.location) {
+              const estadoProduto = pendingCommand.location
+                .split(" - ")
+                .pop()
+                .trim(); // Extrair estado, e.g., "SP"
+              pessoasInfo = pessoasInfo.filter((pessoa) =>
+                pessoa.local.includes(`/${estadoProduto}`),
+              );
+              console.log(
+                `✓ Filtradas ${pessoasInfo.length} pessoas para o estado ${estadoProduto}`,
+              );
+            }
+
+            if (pessoasInfo.length === 0) {
+              conn.sendMessage(pendingCommand.targetGroup, {
+                text: "⚠️ Nenhuma pessoa encontrada na localização do produto.",
+              });
+              delete global.pendingResponses[groupId];
+              return;
+            }
 
             const respostaPessoas = pessoasInfo
               .map((pessoa, index) => {
