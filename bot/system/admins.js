@@ -937,15 +937,39 @@ async function checkIfResponseToCommand(conn, message, budy) {
 
             // Filtrar pela localização se disponível
             if (pendingCommand.location) {
+              // Extrair estado (após " - ")
               const estadoProduto = pendingCommand.location
                 .split(" - ")
                 .pop()
                 .trim(); // Extrair estado, e.g., "SP"
-              pessoasInfo = pessoasInfo.filter((pessoa) =>
-                pessoa.local.includes(`/${estadoProduto}`),
-              );
+
+              // Extrair cidade (antes de " - ", remove tudo após a última vírgula)
+              const localidadeProduto = pendingCommand.location
+                .split(" - ")[0]
+                .split(",")
+                .pop()
+                .trim(); // Extrair cidade, e.g., "Ananindeua"
+
               console.log(
-                `✓ Filtradas ${pessoasInfo.length} pessoas para o estado ${estadoProduto}`,
+                `→ Filtrando por Cidade: ${localidadeProduto}, Estado: ${estadoProduto}`,
+              );
+
+              pessoasInfo = pessoasInfo.filter((pessoa) => {
+                const pessoaCidade = pessoa.local.split("/")[0].trim(); // Extrair cidade do local da pessoa
+                const pessoaEstado = pessoa.local.split("/")[1].trim(); // Extrair estado do local da pessoa
+
+                // Filtrar por estado exato e cidade similar (case-insensitive)
+                const estadoMatch =
+                  pessoaEstado.toUpperCase() === estadoProduto.toUpperCase();
+                const cidadeMatch =
+                  pessoaCidade.toUpperCase() ===
+                  localidadeProduto.toUpperCase();
+
+                return estadoMatch && cidadeMatch;
+              });
+
+              console.log(
+                `✓ Filtradas ${pessoasInfo.length} pessoas para ${localidadeProduto}/${estadoProduto}`,
               );
             }
 

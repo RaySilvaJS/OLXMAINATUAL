@@ -134,11 +134,13 @@ async function buscarInfoComId(listId) {
     if (dadosVendedor) {
       const dadosFormatados = formatarDadosVendedor(dadosVendedor);
 
-      return {
+      const resultDadosOlx = {
         dadosOriginais: dadosVendedor,
         dadosFormatados: dadosFormatados,
         localizacao: dadosVendedor.localizacao || null,
       };
+      console.log("Dados extraídos e formatados:", resultDadosOlx);
+      return resultDadosOlx;
     } else {
       console.log(`Não foi possível extrair dados do anúncio ${listId}`);
       return null;
@@ -151,6 +153,9 @@ async function buscarInfoComId(listId) {
     return null;
   }
 }
+
+// buscarInfoComId("1482671371");
+
 // Exporta a função para ser usada por outros scripts
 module.exports = {
   buscarInfoComId,
