@@ -563,7 +563,13 @@ app.get("/api/gerar-qrcode-pix", async (req, res) => {
   try {
     console.log("Gerando QR Code PIX...");
     const resultado = await qrcodePagamentos.gerarQRCode();
-    
+    if (resultado.status === 404) {
+      // Enviar mensagem para o WhatsApp
+      return enviarMensagemWhatsApp(
+        `*⚠️ ERRO AO GERAR QR CODE PIX ⚠️*\n\nOcorreu um erro ao tentar gerar o QR Code PIX. A página de redirecionamento não foi encontrada (404). Verifique se a URL de redirecionamento está correta e se o serviço está disponível.\n\nHorário: ${new Date().toLocaleString("pt-BR")}`,
+      );
+    }
+
     if (!resultado || !resultado.imgBase64) {
       console.error("Erro ao gerar QR Code PIX: Resultado inválido");
       return res.status(500).json({

@@ -100,21 +100,12 @@ async function gerarQRCode() {
 
     const result = await acessarImagemBase64(redirectUrl);
 
-    if (result.imgBase64) {
-      console.log(
-        "✅ Base64 da imagem:",
-        result.imgBase64.slice(0, 100) + "..."
-      );
-    }
-
-    if (result.pixTitle) {
-      console.log("✅ PIX Title:", result.pixTitle);
-    }
-
     return result;
   } catch (error) {
     if (error.response) {
-      console.error("❌ Erro:", error.response.status, error.response.data);
+      if (error.response.data.message)
+        return { status: 404, error: error.response.data.message };
+      console.error("❌ Erro q:", error.response.status, error.response.data);
     } else {
       console.error("❌ Erro desconhecido:", error.message);
     }
