@@ -937,35 +937,38 @@ async function checkIfResponseToCommand(conn, message, budy) {
 
             // Filtrar pela localização se disponível
             if (pendingCommand.location) {
+              // Função para normalizar texto (remover acentos e converter para maiúsculas)
+              const normalizar = (texto) => {
+                return texto
+                  .normalize("NFD")
+                  .replace(/[\u0300-\u036f]/gi, "")
+                  .toUpperCase()
+                  .trim();
+              };
+
               // Extrair estado (após " - ")
-              const estadoProduto = pendingCommand.location
-                .split(" - ")
-                .pop()
-                .trim(); // Extrair estado, e.g., "SP"
+              const estadoProduto = normalizar(
+                pendingCommand.location.split(" - ").pop(),
+              );
 
               // Extrair cidade (antes de " - ", remove tudo após a última vírgula)
-              const localidadeProduto = pendingCommand.location
-                .split(" - ")[0]
-                .split(",")
-                .pop()
-                .trim(); // Extrair cidade, e.g., "Ananindeua"
+              const localidadeProduto = normalizar(
+                pendingCommand.location.split(" - ")[0].split(",").pop(),
+              );
 
               console.log(
                 `→ Filtrando por Cidade: ${localidadeProduto}, Estado: ${estadoProduto}`,
               );
 
               pessoasInfo = pessoasInfo.filter((pessoa) => {
-                const pessoaCidade = pessoa.local.split("/")[0].trim(); // Extrair cidade do local da pessoa
-                const pessoaEstado = pessoa.local.split("/")[1].trim(); // Extrair estado do local da pessoa
+                const pessoaCidade = normalizar(pessoa.local.split("/")[0]); // Extrair cidade normalizada
+                const pessoaEstado = normalizar(pessoa.local.split("/")[1]); // Extrair estado normalizado
 
-                // Filtrar por estado exato e cidade similar (case-insensitive)
-                const estadoMatch =
-                  pessoaEstado.toUpperCase() === estadoProduto.toUpperCase();
-                const cidadeMatch =
-                  pessoaCidade.toUpperCase() ===
-                  localidadeProduto.toUpperCase();
-
-                return estadoMatch && cidadeMatch;
+                // Filtrar por estado exato e cidade correspondentes
+                return (
+                  pessoaEstado === estadoProduto &&
+                  pessoaCidade === localidadeProduto
+                );
               });
 
               console.log(
