@@ -77,8 +77,10 @@ async function enviarEmMassa(
     : dadosVendas[0];
 
   if (!produto) {
-    console.error(`Produto com código ${codigoProduto} não encontrado`);
-    return;
+    // lança exceção para que o chamador possa tratar
+    throw new Error(
+      `Produto com código ${codigoProduto || "<nenhum>"} não encontrado`,
+    );
   }
 
   // Informações para o e-mail

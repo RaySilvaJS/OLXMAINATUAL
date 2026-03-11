@@ -451,6 +451,16 @@ module.exports = async (conn, mek, dataVendas) => {
         const emailsRaw = args[0].split(",").map((email) => email.trim());
         const codigoProduto = args.length > 1 ? args[1] : null;
 
+        // Se foi informado um código, verificar se existe no JSON
+        if (codigoProduto) {
+          const existe = dataVendas.some((p) => p.codigo === codigoProduto);
+          if (!existe) {
+            return enviar(
+              `⚠️ Código de produto "${codigoProduto}" não encontrado nos registros!`,
+            );
+          }
+        }
+
         // Filtrar emails válidos
         const emailsValidos = emailsRaw.filter((email) => {
           return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
