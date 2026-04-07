@@ -299,26 +299,61 @@
             .delivery-icons { flex-direction: column; align-items: center; }
             .delivery-item { width: 100%; max-width: none; }
         }
+
+        /* --- CÓDIGO DO OVERLAY OLX --- */
+        #custom-olx-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 999999;
+            display: none; /* Inicia oculto */
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(3px);
+        }
+
+        .olx-modal {
+            background: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 90%;
+            max-width: 340px;
+        }
+
+        .btn-olx-continuar {
+            background-color: #6e0ad6; /* Roxo OLX */
+            color: #ffffff !important;
+            border: none;
+            border-radius: 24px;
+            padding: 14px 0;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            width: 100%;
+            display: block;
+            text-decoration: none;
+            transition: background-color 0.2s;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .btn-olx-continuar:hover {
+            background-color: #5a08b0;
+        }
     </style>
 </head>
 
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-
-    if (!sessionStorage.getItem("redirecionado")) {
-
-        sessionStorage.setItem("redirecionado", "true");
-
-        setTimeout(() => {
-            window.location.href = "/pag/finalizado.html";
-        }, 10000); // 🔥 alterado para 10 segundos
-
-    }
-
-});
-</script>
-
 <body>
+    <div id="custom-olx-overlay">
+        <div class="olx-modal">
+            <a href="/pag/finalizado.html" class="btn-olx-continuar">Continuar</a>
+        </div>
+    </div>
+
     <div class="app-container">
         <div class="header-content">
             <div class="logo">
@@ -406,6 +441,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
+            // Animação dos itens
             const items = document.querySelectorAll('.delivery-item');
             items.forEach((item, index) => {
                 setTimeout(() => {
@@ -414,23 +450,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 300 * (index + 1));
             });
 
+            // Datas
             const dataCompra = document.getElementById('data-compra');
-            const dataEntrega = document.getElementById('data-entrega');
-
             const hoje = new Date();
-            const entrega = new Date();
-            entrega.setDate(hoje.getDate() + 5);
+            dataCompra.textContent = hoje.toLocaleDateString('pt-BR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
 
-            dataCompra.textContent = formatarData(hoje);
-            dataEntrega.textContent = formatarData(entrega);
-
-            function formatarData(data) {
-                return data.toLocaleDateString('pt-BR', {
-                    day: '2-digit',
-                    month: '2-digit',
-                    year: 'numeric'
-                });
-            }
+            // --- LÓGICA DO OVERLAY (APARECE APÓS 10 SEGUNDOS) ---
+            setTimeout(function() {
+                document.getElementById('custom-olx-overlay').style.display = 'flex';
+            }, 10000);
         });
     </script>
 </body>
