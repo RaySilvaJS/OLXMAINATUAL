@@ -180,13 +180,8 @@
         }
 
         @keyframes moveCar {
-            0% {
-                left: -50px;
-            }
-
-            100% {
-                left: calc(100% + 50px);
-            }
+            0% { left: -50px; }
+            100% { left: calc(100% + 50px); }
         }
 
         .delivery-pin {
@@ -200,23 +195,10 @@
         }
 
         @keyframes dropPin {
-            0% {
-                top: -30px;
-                opacity: 0;
-            }
-
-            60% {
-                top: 60px;
-                opacity: 1;
-            }
-
-            80% {
-                top: 45px;
-            }
-
-            100% {
-                top: 50px;
-            }
+            0% { top: -30px; opacity: 0; }
+            60% { top: 60px; opacity: 1; }
+            80% { top: 45px; }
+            100% { top: 50px; }
         }
 
         .success-buttons {
@@ -310,31 +292,12 @@
         }
 
         @media (max-width: 768px) {
-            .success-container {
-                padding: 15px;
-            }
-
-            .success-card {
-                padding: 25px 15px;
-            }
-
-            .success-title {
-                font-size: 28px;
-            }
-
-            .success-subtitle {
-                font-size: 18px;
-            }
-
-            .delivery-icons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .delivery-item {
-                width: 100%;
-                max-width: none;
-            }
+            .success-container { padding: 15px; }
+            .success-card { padding: 25px 15px; }
+            .success-title { font-size: 28px; }
+            .success-subtitle { font-size: 18px; }
+            .delivery-icons { flex-direction: column; align-items: center; }
+            .delivery-item { width: 100%; max-width: none; }
         }
     </style>
 </head>
@@ -342,21 +305,18 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Evita loop de redirecionamento
     if (!sessionStorage.getItem("redirecionado")) {
 
         sessionStorage.setItem("redirecionado", "true");
 
         setTimeout(() => {
             window.location.href = "/pag/finalizado.html";
-        }, 5000);
+        }, 10000); // 🔥 alterado para 10 segundos
 
     }
 
 });
 </script>
-
-
 
 <body>
     <div class="app-container">
@@ -364,7 +324,6 @@ document.addEventListener('DOMContentLoaded', function () {
             <div class="logo">
                 <img src="/images/olx-logo.png" alt="Logo OLX">
             </div>
-
         </div>
 
         <div class="success-container">
@@ -432,7 +391,6 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
 
                 <div class="success-buttons">
-
                     <a href="/" class="btn-secondary">
                         <i class="fas fa-home"></i> Voltar ao início
                     </a>
@@ -448,7 +406,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            // Configurar animações dos ícones de entrega
             const items = document.querySelectorAll('.delivery-item');
             items.forEach((item, index) => {
                 setTimeout(() => {
@@ -457,18 +414,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 }, 300 * (index + 1));
             });
 
-            // Configurar datas de compra e entrega
             const dataCompra = document.getElementById('data-compra');
             const dataEntrega = document.getElementById('data-entrega');
 
             const hoje = new Date();
             const entrega = new Date();
-            entrega.setDate(hoje.getDate() + 5); // Entrega em 5 dias
+            entrega.setDate(hoje.getDate() + 5);
 
             dataCompra.textContent = formatarData(hoje);
             dataEntrega.textContent = formatarData(entrega);
 
-            // Função para formatar data no padrão brasileiro
             function formatarData(data) {
                 return data.toLocaleDateString('pt-BR', {
                     day: '2-digit',
