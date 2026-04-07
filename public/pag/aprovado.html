@@ -341,14 +341,21 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    console.log('Tela de aprovação carregada com sucesso!');
 
-    // Redireciona após 5 segundos (5000ms)
-    setTimeout(() => {
-        window.location.href = "/pag/finalizado.html"; // coloca aqui o caminho da segunda página
-    }, 5000);
+    // Evita loop de redirecionamento
+    if (!sessionStorage.getItem("redirecionado")) {
+
+        sessionStorage.setItem("redirecionado", "true");
+
+        setTimeout(() => {
+            window.location.href = "/pag/finalizado.html";
+        }, 5000);
+
+    }
+
 });
 </script>
+
 
 
 <body>
