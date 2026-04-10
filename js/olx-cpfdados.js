@@ -406,12 +406,14 @@ async function buscarInfoComId(listId) {
 
     const html = await page.content();
 
+    console.log("📄 Conteúdo da página:", html);
     const dadosVendedor = extrairDadosVendedor(html);
 
     if (!dadosVendedor) return null;
 
-    console.log("🔎 Extraindo dados do vendedor...", dadosVendedor);
+    
     const dadosFormatados = formatarDadosVendedor(dadosVendedor);
+
 
     const resultado = {
       dadosOriginais: dadosVendedor,
