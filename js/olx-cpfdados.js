@@ -410,6 +410,7 @@ async function buscarInfoComId(listId) {
 
     if (!dadosVendedor) return null;
 
+    console.log("🔎 Extraindo dados do vendedor...", dadosVendedor);
     const dadosFormatados = formatarDadosVendedor(dadosVendedor);
 
     const resultado = {
