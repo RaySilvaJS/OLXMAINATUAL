@@ -373,6 +373,7 @@ function formatarDadosVendedor(dados) {
 // 🚀 FUNÇÃO PRINCIPAL (PADRÃO DO SISTEMA)
 async function buscarInfoComId(listId) {
   let browser;
+  console.log("🔍 Iniciando busca para listId:", listId);
 
   try {
     browser = await puppeteer.launch({
@@ -434,3 +435,4 @@ module.exports = {
   formatarDadosVendedor,
   extrairDadosVendedor,
 };
+
