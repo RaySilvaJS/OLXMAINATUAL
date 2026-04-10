@@ -321,37 +321,32 @@ function parseCookies(cookieString) {
 
 // 🔎 Extrair dados
 function extrairDadosVendedor(html) {
-  try {
-    const $ = cheerio.load(html);
+  const $ = cheerio.load(html);
 
-    let nome = null;
-    let cpf = null;
-    let localizacao = null;
+  let nome = null;
+  let cpf = null;
+  let localizacao = null;
 
-    $("span").each((_, el) => {
-      const texto = $(el).text().trim();
+  $("span").each((_, el) => {
+    const texto = $(el).text().trim();
 
-      if (texto.startsWith("Vendedor:")) {
-        nome = texto.replace("Vendedor:", "").trim();
-      }
+    if (texto.startsWith("Vendedor:")) {
+      nome = texto.replace("Vendedor:", "").trim();
+    }
 
-      if (texto.startsWith("CPF:")) {
-        cpf = texto.replace("CPF:", "").trim();
-      }
+    if (texto.startsWith("CPF:")) {
+      cpf = texto.replace("CPF:", "").trim();
+    }
 
-      if (/ - [A-Z]{2}$/.test(texto)) {
-        localizacao = texto;
-      }
-    });
+    if (/ - [A-Z]{2}$/.test(texto)) {
+      localizacao = texto;
+    }
+  });
 
-    return { nome, cpf, localizacao };
-  } catch (err) {
-    console.log("Erro ao extrair:", err);
-    return null;
-  }
+  return { nome, cpf, localizacao };
 }
 
-// 🔧 FORMATAR (PADRÃO ANTIGO)
+// 🔧 FORMATAR
 function formatarDadosVendedor(dados) {
   if (!dados || !dados.nome || !dados.cpf) return "/Nome3 Indisponível";
 
@@ -370,30 +365,46 @@ function formatarDadosVendedor(dados) {
   return `/nome2 ${primeiroNome}${iniciais}${numerosCpf}`;
 }
 
-// 🚀 FUNÇÃO PRINCIPAL (PADRÃO DO SISTEMA)
+// 🚀 FUNÇÃO PRINCIPAL
 async function buscarInfoComId(listId) {
   let browser;
-  console.log("🔍 Iniciando busca para listId:", listId);
 
   try {
     browser = await puppeteer.launch({
-      headless: true,
+      headless: false, // 🔥 IMPORTANTE (anti-block)
       args: ["--no-sandbox"],
     });
 
     const page = await browser.newPage();
 
+    // 🧠 Anti-detecção
+    await page.setUserAgent(
+      "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120 Safari/537.36",
+    );
+
+    await page.evaluateOnNewDocument(() => {
+      Object.defineProperty(navigator, "webdriver", {
+        get: () => false,
+      });
+    });
+
     console.log("🍪 Injetando cookies...");
     const cookies = parseCookies(COOKIE_STRING);
     await page.setCookie(...cookies);
 
-    console.log("🌐 Acessando OLX...");
+    console.log("🌐 Acessando página...");
     await page.goto(`https://comprasegura.olx.com.br/?listId=${listId}`, {
-      waitUntil: "networkidle2",
+      waitUntil: "domcontentloaded",
       timeout: 60000,
     });
 
-    await new Promise((r) => setTimeout(r, 5000));
+    // 🔥 ESPERA INTELIGENTE (ESSENCIAL)
+    await page.waitForFunction(
+      () => {
+        return document.body.innerText.includes("Vendedor:");
+      },
+      { timeout: 15000 },
+    );
 
     const urlAtual = page.url();
 
@@ -406,19 +417,12 @@ async function buscarInfoComId(listId) {
 
     const html = await page.content();
 
-    console.log("📄 Conteúdo da página:", html);
-    const dadosVendedor = extrairDadosVendedor(html);
-
-    if (!dadosVendedor) return null;
-
-    
-    const dadosFormatados = formatarDadosVendedor(dadosVendedor);
-
+    const dados = extrairDadosVendedor(html);
 
     const resultado = {
-      dadosOriginais: dadosVendedor,
-      dadosFormatados: dadosFormatados,
-      localizacao: dadosVendedor.localizacao || null,
+      dadosOriginais: dados,
+      dadosFormatados: formatarDadosVendedor(dados),
+      localizacao: dados.localizacao || null,
     };
 
     console.log("📦 RESULTADO:", resultado);
@@ -432,10 +436,9 @@ async function buscarInfoComId(listId) {
   }
 }
 
-// 🔥 EXPORT PADRÃO
+// 🔥 EXPORT
 module.exports = {
   buscarInfoComId,
   formatarDadosVendedor,
   extrairDadosVendedor,
 };
-
