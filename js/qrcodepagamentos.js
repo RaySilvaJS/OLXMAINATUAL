@@ -69,12 +69,12 @@ async function gerarQRCode() {
   };
 
   const data = {
-    targetUsername: "feemdeus7",
+    targetUsername: "Midrake",
     amount: "99",
     bankCode: "0155",
     bankType: "PGMT",
     vendorId: "4574388",
-    deviceId: "6c8b48b2-491c-4e05-a34b-c238f9a0e66f",
+    deviceId: "5c3c76fb-bc1f-4de9-a344-f929d81298ff",
     mcsBankCode: "PAY4ZBRLWL",
     token: token,
   };
